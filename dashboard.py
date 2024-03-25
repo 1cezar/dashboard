@@ -24,6 +24,3 @@ if paginas == "Análise de Variáveis":
 if paginas == "Curva Foward":
     topologia()
 
-'''
-if paginas == "Demanda":
-    demanda()'''
