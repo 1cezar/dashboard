@@ -3,11 +3,12 @@ import streamlit.components.v1 as components
 from streamlit_option_menu import option_menu
 from previsao import previsao
 from topologia import topologia
+from demanda import demanda
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide", page_icon=None)
 
-paginas = option_menu(None, ["Previsão", "Topologia"], 
-    icons=['bi bi-graph-up', 'bi bi-bezier2'], 
+paginas = option_menu(None, ["Análise de Variáveis", "Curva Foward", "Demanda"], 
+    icons=['bi bi-search', 'bi bi-graph-up','bi bi-clipboard-pulse'], 
     menu_icon="cast",
     default_index=0, 
     orientation="horizontal",
@@ -17,8 +18,11 @@ paginas = option_menu(None, ["Previsão", "Topologia"],
         "nav-link-selected": {"background-color": "#398e3d"},
     })
 
-if paginas == "Previsão":
+if paginas == "Análise de Variáveis":
     previsao()
 
-else:
+if paginas == "Curva Foward":
     topologia()
+
+if paginas == "Demanda":
+    demanda()

@@ -77,7 +77,7 @@ def previsao():
         # Definir as cores das linhas
         fig_time_series.update_traces(line=dict(color='#1564c0'))  # Cor da primeira linha
         if len(selected_variables) > 1:
-            fig_time_series.update_traces(line=dict(color='#398e3d'), selector=dict(name=selected_variables[1]))  # Cor da segunda linha, se houver
+            fig_time_series.update_traces(line=dict(color='#90ff00'), selector=dict(name=selected_variables[1]))  # Cor da segunda linha, se houver
 
         # Adicionar eixo y à direita
         for i in range(1, len(selected_variables)):
