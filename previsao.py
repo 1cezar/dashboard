@@ -6,7 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
 
-def previsao():
+
+def previsao():          
     data = pd.read_csv('./Dados/Dados_Sudeste-Centro-Oeste_mensal.csv')
     data['DATA'] = pd.to_datetime(data['DATA'])
     correlation_matrix = data.corr(method='pearson')
@@ -20,9 +21,9 @@ def previsao():
     """, unsafe_allow_html=True)
     
     # Layout do gráfico
-    col1, col2 = st.columns([1, 8])
+    col1, col2 = st.columns([10, 1])
 
-    with col1:
+    with col2:
         prazo = st.radio("Prazo:", ("Trimestral", "Longo prazo"), key='prazo')
 
     # Determinar a variável base com base na seleção do interruptor
@@ -42,12 +43,12 @@ def previsao():
         "Demanda Máxima": "DM_SECO",
         "Preço da Liquidação das Diferenças": "PLD_SECO",
         "Capacidade Instalada": "CI_SECO",
-        "PIB": "PIB"
+        "PIB": "PIB",
         # Adicione mais mapeamentos conforme necessário
     }
 
     # Dropdown para selecionar a variável para correlacionar com a variável base
-    with col2:
+    with col1:
         selected_variable = st.selectbox(f"Selecionar variável para correlacionar com {selected_label}:", list(variavel_map.keys()), index=1)
 
 
@@ -85,20 +86,15 @@ def previsao():
 
         # Atualizar layout para incluir segundo eixo y à direita
         for i in range(2, len(selected_variables) + 1):
-            fig_time_series.update_layout(yaxis2=dict(anchor='x', overlaying='y', side='right', position=0.95 - 0.05 * (i - 1), tickfont=dict(color='white')), showlegend=True)  # Alterado para preto
+            fig_time_series.update_layout(yaxis2=dict(anchor='x', overlaying='y', side='right', position=0.95 - 0.04 * (i - 1), tickfont=dict(color='white'), title="($ꓤ) ꓤOꓶⱯꓥ"), showlegend=True)
 
         # Calcular e exibir a correlação de Pearson entre as variáveis selecionadas e a variável base
         for variable in selected_variables:
             if variable != base_variable:
                 correlation_value = correlation_matrix.loc[base_variable, variable]
-        st.plotly_chart(fig_time_series, use_container_width=True)
 
-        cor_color = "normal" if correlation_value >= 0.0 else "inverse"
-                
         formatted_correlation = "{:.8f}".format(correlation_value)
 
-        st.metric(label="Correlação",
-                  value= formatted_correlation, 
-                  delta=formatted_correlation, 
-                  delta_color=cor_color
-                  )
+        st.metric(label="Correlação", value= formatted_correlation)
+
+        st.plotly_chart(fig_time_series, use_container_width=True)
