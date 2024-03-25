@@ -21,6 +21,6 @@ paginas = option_menu(None, ["Análise de Variáveis", "Curva Forward"],
 if paginas == "Análise de Variáveis":
     previsao()
 
-if paginas == "Curva Foward":
+if paginas == "Curva Forward":
     topologia()
 
