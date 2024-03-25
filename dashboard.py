@@ -7,7 +7,7 @@ from demanda import demanda
 
 st.set_page_config(layout="wide", page_icon=None)
 
-paginas = option_menu(None, ["Análise de Variáveis", "Curva Foward"], 
+paginas = option_menu(None, ["Análise de Variáveis", "Curva Forward"], 
     icons=['bi bi-search', 'bi bi-graph-up','bi bi-clipboard-pulse'], 
     menu_icon="cast",
     default_index=0, 
