@@ -12,9 +12,6 @@ def previsao():
     data['DATA'] = pd.to_datetime(data['DATA'])
     correlation_matrix = data.corr(method='pearson')
 
-    
-
-    st.title("Análise de Dados de Energia")
 
     st.markdown("""
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">

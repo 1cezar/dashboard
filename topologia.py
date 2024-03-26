@@ -27,9 +27,17 @@ def topologia():
         data['DATA'] = pd.to_datetime(data['DATA'])
         fim = pd.to_datetime('2020-12-01')
         data_limite = data.loc[data['DATA'] <= fim]
+        data_dict = {
+                    "PLD_SECO": "Preço das Liquidações das Diferenças",
+                    "EA_SECO": "Energia Armazenada",
+                    "TER": "Geração Térmica",
+                    "HID": "Geração Hídrica",
+                    "LPC_SECO": "Preço"
+                }
+        df = pd.DataFrame(list(data_dict.items()), columns=["Variável", "Descrição"])
 
 
-        results = pd.read_csv('./Dados/resultados_previsao_3_anos_INf_HI_PLD_AE.csv')
+        results = pd.read_csv('./Dados/resultados/resultados/preco/Expe_1/resultados_previsao.csv')
         results['Data'] = pd.to_datetime(results['Data'])
         results = results.loc[results['Data'] <= fim]
 
@@ -55,7 +63,7 @@ def topologia():
             tab1, tab2 = st.tabs(["Topologia", "Previsão"])
 
             with tab1:
-                c3, c4= st.columns([3,1])
+                c3, c4, c5= st.columns([2,1,1])
                 with st.container():
                     c3.write("")
                     c4.write("")
@@ -94,6 +102,7 @@ def topologia():
                     # Criar a figura
                     fig = go.Figure()
 
+                    
                     # # Adicionar arestas à figura
                     fig.add_trace(go.Scatter3d(x=edge_x, y=edge_y, z=edge_z, mode='lines', line=dict(color='limegreen', width=0.8), hoverinfo='none'))
 
@@ -117,8 +126,11 @@ def topologia():
 
                     # Exibir a figura
                     st.plotly_chart(fig)
-                with c4:
+                with c5:
                     st.json(topology_data)
+                with c4:
+                    st.write("Dicionário de Dados:")
+                    st.dataframe(df.set_index('Variável'))
 
             with tab2:
                 st.write('##### Nesse cenário foi inserido aleatoriamento inferências na variável Energia Armazenada. Os dados de Energia Armazendo foram categorizados em: Nível Baixo, Nível Médio e Nível Alto As inferências foram sempre na categoria Alto para os meses de Dezembro/2019 até Novembro/2020.')
@@ -152,7 +164,7 @@ def topologia():
             tab1, tab2 = st.tabs(["Topologia", "Previsão"])
 
             with tab1:
-                c3, c4= st.columns([3,1])
+                c3, c4, c5= st.columns([2,1,1])
                 with st.container():
                     c3.write("")
                     c4.write("")
@@ -214,8 +226,11 @@ def topologia():
 
                     # Exibir a figura
                     st.plotly_chart(fig)
-                with c4:
+                with c5:
                     st.json(topology_data2)
+                with c4:
+                    st.write("Dicionário de Dados:")
+                    st.dataframe(df.set_index('Variável'))
 
             with tab2:
                 st.write('##### Nesse Cenário foi realizado inferências nas variáveis Geração Hídrica e Energia Armazenada. Os dados de Energia Armazendo e Geração Hídrica foram categorizados em: Nível Baixo, Nível Médio e Nível Alto, Para o mes de Novembro/2018 foi inferido que o Nível da Energia Armazendada e a Geração Hídrica estava Médio. Para o segundo semestre/2020 foi inserido que o nível da Energia Armazendas estava Alto e a Nível da Geração Hídrica estava modificando de Médio para  Alto.')
@@ -250,7 +265,7 @@ def topologia():
             tab1, tab2 = st.tabs(["Topologia", "Previsão"])
 
             with tab1:
-                c3, c4= st.columns([3,1])
+                c3, c4, c5= st.columns([2,1,1])
                 with st.container():
                     c3.write("")
                     c4.write("")
@@ -312,8 +327,11 @@ def topologia():
 
                     # Exibir a figura
                     st.plotly_chart(fig)
-                with c4:
+                with c5:
                     st.json(topology_data)
+                with c4:
+                    st.write("Dicionário de Dados:")
+                    st.dataframe(df.set_index('Variável'))
 
             with tab2:
                 st.write('##### Nesse cenário foi realizado inferências nas variáveis Preço de Liquidação das Diferenças, Energia Armazenada e Geração Hídrica. Os dados de Energia Armazendo, Geração Hídrica e Preço de Liquidação das Diferenças foram categorizados em: Nível Baixo, Nível Médio e Nível Alto.')
