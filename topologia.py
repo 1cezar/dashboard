@@ -51,279 +51,293 @@ def topologia():
 
         if cenario == "Cenário Um":
 
-            c1, c2= st.columns(2)
+            tab1, tab2 = st.tabs(["Topologia", "Previsão"])
 
-            with st.container():
-                c1.write("")
-                c2.write("")
+            with tab1:
+                c3, c4= st.columns([3,1])
+                with st.container():
+                    c3.write("")
+                    c4.write("")
 
-            with c2:
-                G = nx.DiGraph()
+                with c3:
+                    G = nx.DiGraph()
 
-                # # Adicionar nós e arestas ao grafo
-                for edge in topology_data["topologia"]:
-                    G.add_edge(edge[0], edge[1])
+                    # # Adicionar nós e arestas ao grafo
+                    for edge in topology_data["topologia"]:
+                        G.add_edge(edge[0], edge[1])
 
-                # Layout do grafo
-                pos = nx.spring_layout(G, dim=3, seed=41)  # Layout usando algoritmo Spring em 3D
+                    # Layout do grafo
+                    pos = nx.spring_layout(G, dim=3, seed=41)  # Layout usando algoritmo Spring em 3D
 
-                # Criar os nós do grafo
-                node_x = []
-                node_y = []
-                node_z = []
-                for node in G.nodes:
-                    x, y, z = pos[node]
-                    node_x.append(x)
-                    node_y.append(y)
-                    node_z.append(z)
+                    # Criar os nós do grafo
+                    node_x = []
+                    node_y = []
+                    node_z = []
+                    for node in G.nodes:
+                        x, y, z = pos[node]
+                        node_x.append(x)
+                        node_y.append(y)
+                        node_z.append(z)
 
-                # Criar as arestas do grafo
-                edge_x = []
-                edge_y = []
-                edge_z = []
-                for edge in G.edges():
-                    x0, y0, z0 = pos[edge[0]]
-                    x1, y1, z1 = pos[edge[1]]
-                    edge_x.extend([x0, x1, None])
-                    edge_y.extend([y0, y1, None])
-                    edge_z.extend([z0, z1, None])
+                    # Criar as arestas do grafo
+                    edge_x = []
+                    edge_y = []
+                    edge_z = []
+                    for edge in G.edges():
+                        x0, y0, z0 = pos[edge[0]]
+                        x1, y1, z1 = pos[edge[1]]
+                        edge_x.extend([x0, x1, None])
+                        edge_y.extend([y0, y1, None])
+                        edge_z.extend([z0, z1, None])
 
-                # Criar a figura
-                fig = go.Figure()
+                    # Criar a figura
+                    fig = go.Figure()
 
-                # # Adicionar arestas à figura
-                fig.add_trace(go.Scatter3d(x=edge_x, y=edge_y, z=edge_z, mode='lines', line=dict(color='limegreen', width=0.8), hoverinfo='none'))
+                    # # Adicionar arestas à figura
+                    fig.add_trace(go.Scatter3d(x=edge_x, y=edge_y, z=edge_z, mode='lines', line=dict(color='limegreen', width=0.8), hoverinfo='none'))
 
-                # Adicionar nós à figura
-                fig.add_trace(go.Scatter3d(x=node_x, y=node_y, z=node_z, mode='markers+text', text=list(G.nodes()), 
-                                        textposition="middle center", marker=dict(color='limegreen', size=40)))
+                    # Adicionar nós à figura
+                    fig.add_trace(go.Scatter3d(x=node_x, y=node_y, z=node_z, mode='markers+text', text=list(G.nodes()), 
+                                            textposition="middle center", marker=dict(color='limegreen', size=40)))
 
-                # # Configurar layout da figura
-                fig.update_layout(title=f"Topologia: {topology_data['name']}", titlefont_size=12, showlegend=False, hovermode='closest', 
-                                margin=dict(b=20,l=5,r=5,t=40), 
-                                annotations=[ dict(text="", showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002 ) ], scene=dict(xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), zaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+                    # # Configurar layout da figura
+                    fig.update_layout(title=f"Topologia: {topology_data['name']}", titlefont_size=12, showlegend=False, hovermode='closest', 
+                                    margin=dict(b=20,l=5,r=5,t=40), 
+                                    annotations=[ dict(text="", showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002 ) ], scene=dict(xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), zaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
-                frames = []
-                for i in np.linspace(0, 2 * np.pi, 36):
-                    new_x = np.cos(i) * np.array(node_x) - np.sin(i) * np.array(node_y)
-                    new_y = np.sin(i) * np.array(node_x) + np.cos(i) * np.array(node_y)
-                    frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=node_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
+                    frames = []
+                    for i in range(36):
+                        new_x = node_x + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em x
+                        new_y = node_y + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em y
+                        new_z = node_z + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em z
+                        frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=new_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
 
-                fig.frames = frames
+                    fig.frames = frames
 
-                # Exibir a figura
-                st.plotly_chart(fig)
+                    # Exibir a figura
+                    st.plotly_chart(fig)
+                with c4:
+                    st.json(topology_data)
+
+            with tab2:
+                st.write('##### Nesse cenário foi inserido aleatoriamento inferências na variável Energia Armazenada. Os dados de Energia Armazendo foram categorizados em: Nível Baixo, Nível Médio e Nível Alto As inferências foram sempre na categoria Alto para os meses de Dezembro/2019 até Novembro/2020.')
+
+                confidence_factor = 0.2
+                results['lower_lim'] = results['mean'] - ((results['mean'] - results['lower_lim']) * confidence_factor)
+                results['upper_lim'] = results['mean'] + ((results['upper_lim'] - results['mean']) * confidence_factor) 
                 
-            with c1:
-                st.markdown("### Where can I get some?")
-                st.markdown("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures")
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
 
-            
-            confidence_factor = 0.3
-            results['lower_lim'] = results['mean'] - ((results['mean'] - results['lower_lim']) * confidence_factor)
-            results['upper_lim'] = results['mean'] + ((results['upper_lim'] - results['mean']) * confidence_factor)   
-            fig = go.Figure()
-            # Adicionar a linha média
-            fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
+                # Adicionar os limites superior e inferior
+                fig.add_trace(go.Scatter(x=results['Data'], y=results['upper_lim'], mode='lines', 
+                                            line=dict(color='rgba(0,0,0,0)', width=1),
+                                        showlegend=False))
+                fig.add_trace(go.Scatter(x=results['Data'], y=results['lower_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Limite Inferior'))
+                fig.add_trace(go.Scatter(x=results['Data'], y=results['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Limite Superior'))
+                fig.add_trace(go.Scatter(x=results['Data'], y=results['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Previsto'))
 
-             # Adicionar os limites superior e inferior
-            fig.add_trace(go.Scatter(x=results['Data'], y=results['upper_lim'], mode='lines', 
-                                        line=dict(color='rgba(0,0,0,0)', width=1),
-                                    showlegend=False))
-            fig.add_trace(go.Scatter(x=results['Data'], y=results['lower_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Limite Inferior'))
-            fig.add_trace(go.Scatter(x=results['Data'], y=results['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Limite Superior'))
-            fig.add_trace(go.Scatter(x=results['Data'], y=results['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Previsto'))
-
-            fig.update_layout(title='Intervalo de Confiança',
-                            xaxis_title='Data',
-                            yaxis_title='Valor',
-                            width=1275)
-            # Exibir o gráfico no Streamlit
-            st.plotly_chart(fig)
+                fig.update_layout(title='Intervalo de Confiança',
+                                xaxis_title='Período',
+                                yaxis_title='Valor (R$)',
+                                width=1275)
+                # Exibir o gráfico no Streamlit
+                st.plotly_chart(fig)
 
         if cenario == "Cenário Dois":
-            c3, c4= st.columns(2)
-            
-            with c3:
-                st.markdown("### Where can I get some?")
-                st.markdown("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures")
-            with c4:
-                G = nx.DiGraph()
+            tab1, tab2 = st.tabs(["Topologia", "Previsão"])
 
-                # # Adicionar nós e arestas ao grafo
-                for edge in topology_data2["topologia"]:
-                    G.add_edge(edge[0], edge[1])
+            with tab1:
+                c3, c4= st.columns([3,1])
+                with st.container():
+                    c3.write("")
+                    c4.write("")
 
-                # Layout do grafo
-                pos = nx.spring_layout(G, dim=3, seed=41)  # Layout usando algoritmo Spring em 3D
+                with c3:
+                    G = nx.DiGraph()
 
-                # Criar os nós do grafo
-                node_x = []
-                node_y = []
-                node_z = []
-                for node in G.nodes:
-                    x, y, z = pos[node]
-                    node_x.append(x)
-                    node_y.append(y)
-                    node_z.append(z)
+                    # # Adicionar nós e arestas ao grafo
+                    for edge in topology_data2["topologia"]:
+                        G.add_edge(edge[0], edge[1])
 
-                # Criar as arestas do grafo
-                edge_x = []
-                edge_y = []
-                edge_z = []
-                for edge in G.edges():
-                    x0, y0, z0 = pos[edge[0]]
-                    x1, y1, z1 = pos[edge[1]]
-                    edge_x.extend([x0, x1, None])
-                    edge_y.extend([y0, y1, None])
-                    edge_z.extend([z0, z1, None])
+                    # Layout do grafo
+                    pos = nx.spring_layout(G, dim=3, seed=41)  # Layout usando algoritmo Spring em 3D
 
-                # Criar a figura
+                    # Criar os nós do grafo
+                    node_x = []
+                    node_y = []
+                    node_z = []
+                    for node in G.nodes:
+                        x, y, z = pos[node]
+                        node_x.append(x)
+                        node_y.append(y)
+                        node_z.append(z)
+
+                    # Criar as arestas do grafo
+                    edge_x = []
+                    edge_y = []
+                    edge_z = []
+                    for edge in G.edges():
+                        x0, y0, z0 = pos[edge[0]]
+                        x1, y1, z1 = pos[edge[1]]
+                        edge_x.extend([x0, x1, None])
+                        edge_y.extend([y0, y1, None])
+                        edge_z.extend([z0, z1, None])
+
+                    # Criar a figura
+                    fig = go.Figure()
+
+                    # # Adicionar arestas à figura
+                    fig.add_trace(go.Scatter3d(x=edge_x, y=edge_y, z=edge_z, mode='lines', line=dict(color='limegreen', width=0.8), hoverinfo='none'))
+
+                    # Adicionar nós à figura
+                    fig.add_trace(go.Scatter3d(x=node_x, y=node_y, z=node_z, mode='markers+text', text=list(G.nodes()), 
+                                            textposition="middle center", marker=dict(color='limegreen', size=40)))
+
+                    # # Configurar layout da figura
+                    fig.update_layout(title=f"Topologia: {topology_data2['name']}", titlefont_size=12, showlegend=False, hovermode='closest', 
+                                    margin=dict(b=20,l=5,r=5,t=40), 
+                                    annotations=[ dict(text="", showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002 ) ], scene=dict(xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), zaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+
+                    frames = []
+                    for i in range(36):
+                        new_x = node_x + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em x
+                        new_y = node_y + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em y
+                        new_z = node_z + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em z
+                        frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=new_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
+
+                    fig.frames = frames
+
+                    # Exibir a figura
+                    st.plotly_chart(fig)
+                with c4:
+                    st.json(topology_data2)
+
+            with tab2:
+                st.write('##### Nesse Cenário foi realizado inferências nas variáveis Geração Hídrica e Energia Armazenada. Os dados de Energia Armazendo e Geração Hídrica foram categorizados em: Nível Baixo, Nível Médio e Nível Alto, Para o mes de Novembro/2018 foi inferido que o Nível da Energia Armazendada e a Geração Hídrica estava Médio. Para o segundo semestre/2020 foi inserido que o nível da Energia Armazendas estava Alto e a Nível da Geração Hídrica estava modificando de Médio para  Alto.')
+
+                '''
+                confidence_factor = 0.3
+                results2['lower_lim'] = results2['mean'] - ((results2['mean'] - results2['lower_lim']) * confidence_factor)
+                results2['upper_lim'] = results2['mean'] + ((results2['upper_lim'] - results2['mean']) * confidence_factor) 
+                '''
                 fig = go.Figure()
+                fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
 
-                # # Adicionar arestas à figura
-                fig.add_trace(go.Scatter3d(x=edge_x, y=edge_y, z=edge_z, mode='lines', line=dict(color='limegreen', width=0.8), hoverinfo='none'))
+                # Adicionar os limites superior e inferior
+                fig.add_trace(go.Scatter(x=results2['Data'], y=results2['upper_lim'], mode='lines', 
+                                            line=dict(color='rgba(0,0,0,0)', width=1),
+                                        showlegend=False))
+                fig.add_trace(go.Scatter(x=results2['Data'], y=results2['lower_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Limite Inferior'))
+                fig.add_trace(go.Scatter(x=results2['Data'], y=results2['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Limite Superior'))
+                fig.add_trace(go.Scatter(x=results2['Data'], y=results2['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Previsto'))
 
-                # Adicionar nós à figura
-                fig.add_trace(go.Scatter3d(x=node_x, y=node_y, z=node_z, mode='markers+text', text=list(G.nodes()), 
-                                        textposition="middle center", marker=dict(color='limegreen', size=40)))
-
-                # # Configurar layout da figura
-                fig.update_layout(title=f"Topologia: {topology_data['name']}", titlefont_size=12, showlegend=False, hovermode='closest', 
-                                margin=dict(b=20,l=5,r=5,t=40), 
-                                annotations=[ dict(text="", showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002 ) ], scene=dict(xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), zaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
-
-                frames = []
-                for i in np.linspace(0, 2 * np.pi, 36):
-                    new_x = np.cos(i) * np.array(node_x) - np.sin(i) * np.array(node_y)
-                    new_y = np.sin(i) * np.array(node_x) + np.cos(i) * np.array(node_y)
-                    frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=node_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
-
-                fig.frames = frames
-
-                # Exibir a figura
+                fig.update_layout(title='Intervalo de Confiança',
+                                xaxis_title='Período',
+                                yaxis_title='Valor (R$)',
+                                width=1275)
+                # Exibir o gráfico no Streamlit
                 st.plotly_chart(fig)
-            '''
-            confidence_factor = 0.6
-            results2['lower_lim'] = results2['mean'] - ((results2['mean'] - results2['lower_lim']) * confidence_factor)
-            results2['upper_lim'] = results2['mean'] + ((results2['upper_lim'] - results2['mean']) * confidence_factor)
-            '''
-            fig = go.Figure()
-            # Adicionar a linha média
-            fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
-
-            # Adicionar os limites superior e inferior
-            fig.add_trace(go.Scatter(x=results2['Data'], y=results2['upper_lim'], mode='lines', 
-                                        line=dict(color='rgba(0,0,0,0)', width=1),
-                                    showlegend=False))
-            fig.add_trace(go.Scatter(x=results2['Data'], y=results2['lower_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Limite Inferior'))
-            fig.add_trace(go.Scatter(x=results2['Data'], y=results2['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Limite Superior'))
-            fig.add_trace(go.Scatter(x=results2['Data'], y=results2['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Previsto'))
-
-            fig.update_layout(title='Intervalo de Confiança',
-                            xaxis_title='Data',
-                            yaxis_title='Valor',
-                            width=1275)
-            # Exibir o gráfico no Streamlit
-            st.plotly_chart(fig)
 
         if cenario == "Cenário Três":
-            c1, c2= st.columns(2)
+            tab1, tab2 = st.tabs(["Topologia", "Previsão"])
 
-            with st.container():
-                c1.write("")
-                c2.write("")
+            with tab1:
+                c3, c4= st.columns([3,1])
+                with st.container():
+                    c3.write("")
+                    c4.write("")
 
-            with c2:
-                G = nx.DiGraph()
+                with c3:
+                    G = nx.DiGraph()
 
-                # # Adicionar nós e arestas ao grafo
-                for edge in topology_data["topologia"]:
-                    G.add_edge(edge[0], edge[1])
+                    # # Adicionar nós e arestas ao grafo
+                    for edge in topology_data["topologia"]:
+                        G.add_edge(edge[0], edge[1])
 
-                # Layout do grafo
-                pos = nx.spring_layout(G, dim=3, seed=41)  # Layout usando algoritmo Spring em 3D
+                    # Layout do grafo
+                    pos = nx.spring_layout(G, dim=3, seed=41)  # Layout usando algoritmo Spring em 3D
 
-                # Criar os nós do grafo
-                node_x = []
-                node_y = []
-                node_z = []
-                for node in G.nodes:
-                    x, y, z = pos[node]
-                    node_x.append(x)
-                    node_y.append(y)
-                    node_z.append(z)
+                    # Criar os nós do grafo
+                    node_x = []
+                    node_y = []
+                    node_z = []
+                    for node in G.nodes:
+                        x, y, z = pos[node]
+                        node_x.append(x)
+                        node_y.append(y)
+                        node_z.append(z)
 
-                # Criar as arestas do grafo
-                edge_x = []
-                edge_y = []
-                edge_z = []
-                for edge in G.edges():
-                    x0, y0, z0 = pos[edge[0]]
-                    x1, y1, z1 = pos[edge[1]]
-                    edge_x.extend([x0, x1, None])
-                    edge_y.extend([y0, y1, None])
-                    edge_z.extend([z0, z1, None])
+                    # Criar as arestas do grafo
+                    edge_x = []
+                    edge_y = []
+                    edge_z = []
+                    for edge in G.edges():
+                        x0, y0, z0 = pos[edge[0]]
+                        x1, y1, z1 = pos[edge[1]]
+                        edge_x.extend([x0, x1, None])
+                        edge_y.extend([y0, y1, None])
+                        edge_z.extend([z0, z1, None])
 
-                # Criar a figura
-                fig = go.Figure()
+                    # Criar a figura
+                    fig = go.Figure()
 
-                # # Adicionar arestas à figura
-                fig.add_trace(go.Scatter3d(x=edge_x, y=edge_y, z=edge_z, mode='lines', line=dict(color='limegreen', width=0.8), hoverinfo='none'))
+                    # # Adicionar arestas à figura
+                    fig.add_trace(go.Scatter3d(x=edge_x, y=edge_y, z=edge_z, mode='lines', line=dict(color='limegreen', width=0.8), hoverinfo='none'))
 
-                # Adicionar nós à figura
-                fig.add_trace(go.Scatter3d(x=node_x, y=node_y, z=node_z, mode='markers+text', text=list(G.nodes()), 
-                                        textposition="middle center", marker=dict(color='limegreen', size=40)))
+                    # Adicionar nós à figura
+                    fig.add_trace(go.Scatter3d(x=node_x, y=node_y, z=node_z, mode='markers+text', text=list(G.nodes()), 
+                                            textposition="middle center", marker=dict(color='limegreen', size=40)))
 
-                # # Configurar layout da figura
-                fig.update_layout(title=f"Topologia: {topology_data['name']}", titlefont_size=12, showlegend=False, hovermode='closest', 
-                                margin=dict(b=20,l=5,r=5,t=40), 
-                                annotations=[ dict(text="", showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002 ) ], scene=dict(xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), zaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+                    # # Configurar layout da figura
+                    fig.update_layout(title=f"Topologia: {topology_data['name']}", titlefont_size=12, showlegend=False, hovermode='closest', 
+                                    margin=dict(b=20,l=5,r=5,t=40), 
+                                    annotations=[ dict(text="", showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002 ) ], scene=dict(xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), zaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
-                frames = []
-                for i in range(36):
-                    new_x = node_x + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em x
-                    new_y = node_y + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em y
-                    new_z = node_z + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em z
-                    frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=new_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
+                    frames = []
+                    for i in range(36):
+                        new_x = node_x + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em x
+                        new_y = node_y + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em y
+                        new_z = node_z + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em z
+                        frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=new_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
 
-                fig.frames = frames
+                    fig.frames = frames
 
-                # Exibir a figura
-                st.plotly_chart(fig)
+                    # Exibir a figura
+                    st.plotly_chart(fig)
+                with c4:
+                    st.json(topology_data)
+
+            with tab2:
+                st.write('##### Nesse cenário foi realizado inferências nas variáveis Preço de Liquidação das Diferenças, Energia Armazenada e Geração Hídrica. Os dados de Energia Armazendo, Geração Hídrica e Preço de Liquidação das Diferenças foram categorizados em: Nível Baixo, Nível Médio e Nível Alto.')
+
+                confidence_factor = 0.3
+                results3['lower_lim'] = results3['mean'] - ((results3['mean'] - results3['lower_lim']) * confidence_factor)
+                results3['upper_lim'] = results3['mean'] + ((results3['upper_lim'] - results3['mean']) * confidence_factor) 
                 
-            with c1:
-                st.markdown("### Where can I get some?")
-                st.markdown("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures")
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
 
-            
-            confidence_factor = 0.3
-            results3['lower_lim'] = results3['mean'] - ((results3['mean'] - results3['lower_lim']) * confidence_factor)
-            results3['upper_lim'] = results3['mean'] + ((results3['upper_lim'] - results3['mean']) * confidence_factor) 
-            
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
+                # Adicionar os limites superior e inferior
+                fig.add_trace(go.Scatter(x=results3['Data'], y=results3['upper_lim'], mode='lines', 
+                                            line=dict(color='rgba(0,0,0,0)', width=1),
+                                        showlegend=False))
+                fig.add_trace(go.Scatter(x=results3['Data'], y=results3['lower_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Limite Inferior'))
+                fig.add_trace(go.Scatter(x=results3['Data'], y=results3['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Limite Superior'))
+                fig.add_trace(go.Scatter(x=results3['Data'], y=results3['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
+                                        name='Previsto'))
 
-            # Adicionar os limites superior e inferior
-            fig.add_trace(go.Scatter(x=results3['Data'], y=results3['upper_lim'], mode='lines', 
-                                        line=dict(color='rgba(0,0,0,0)', width=1),
-                                    showlegend=False))
-            fig.add_trace(go.Scatter(x=results3['Data'], y=results3['lower_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Limite Inferior'))
-            fig.add_trace(go.Scatter(x=results3['Data'], y=results3['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Limite Superior'))
-            fig.add_trace(go.Scatter(x=results3['Data'], y=results3['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
-                                    name='Previsto'))
-
-            fig.update_layout(title='Intervalo de Confiança',
-                            xaxis_title='Data',
-                            yaxis_title='Valor',
-                            width=1275)
-            # Exibir o gráfico no Streamlit
-            st.plotly_chart(fig)
+                fig.update_layout(title='Intervalo de Confiança',
+                                xaxis_title='Período',
+                                yaxis_title='Valor (R$)',
+                                width=1275)
+                # Exibir o gráfico no Streamlit
+                st.plotly_chart(fig)
