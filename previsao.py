@@ -75,7 +75,7 @@ def previsao():
             grandesa = 'VALOR (MW)'
             # Gráfico de série temporal para as variáveis selecionadas
         fig_time_series = px.line(filtered_data, x='DATA', y=selected_variables, 
-                                title=f"Série Temporal das Variáveis Selecionadas para {selected_label}", 
+                                title=f"{selected_label} {legenda}", 
                                 labels={'variable': 'Variável', 'value': grandesa}, template='plotly_white')
 
         # Definir as cores das linhas
