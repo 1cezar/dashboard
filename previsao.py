@@ -18,18 +18,23 @@ def previsao():
     """, unsafe_allow_html=True)
     
     # Layout do gráfico
-    col1, col2 = st.columns([10, 1])
+    col1, col2 = st.columns([8, 1])
+
+
+    selected_variable = st.session_state.get('selected_variable', "Carga")
 
     with col2:
-        prazo = st.radio("Prazo:", ("Trimestral", "Longo prazo"), key='prazo')
+        prazo = st.radio("Prazo:", ("Trimestral", "Longo Prazo"), key='prazo')
 
     # Determinar a variável base com base na seleção do interruptor
     if prazo == "Trimestral":
         base_variable = "MPC_SECO"
         selected_label = "Trimestral"
+        legenda = "(MPC)"
     else:
         base_variable = "LPC_SECO"
-        selected_label = "Longo prazo"
+        selected_label = "Longo Prazo"
+        legenda = "(LPC)"
 
     # Criar um dicionário de mapeamento de variáveis
     variavel_map = {
@@ -40,13 +45,14 @@ def previsao():
         "Demanda Máxima": "DM_SECO",
         "Preço da Liquidação das Diferenças": "PLD_SECO",
         "Capacidade Instalada": "CI_SECO",
-        "PIB": "PIB",
+        "PIB": "PIB"
         # Adicione mais mapeamentos conforme necessário
     }
 
-    # Dropdown para selecionar a variável para correlacionar com a variável base
     with col1:
-        selected_variable = st.selectbox(f"Selecionar variável para correlacionar com {selected_label}:", list(variavel_map.keys()), index=1)
+        manter = variavel_map.keys()
+        selected_variable = st.selectbox(f"Selecionar variável para correlacionar com {selected_label}:", list(manter), index=list(manter).index(selected_variable))
+        st.session_state.selected_variable = selected_variable
 
 
     # Verificar se uma variável foi selecionada
