@@ -24,17 +24,21 @@ def topologia():
         })
         data = pd.read_csv('./Dados/Dados_Sudeste-Centro-Oeste_mensal.csv')
         data['DATA'] = pd.to_datetime(data['DATA'])
+        fim = pd.to_datetime('2020-12-01')
+        data_limite = data.loc[data['DATA'] <= fim]
 
-        data_limite = data.loc[data['DATA'] <= '2021-12-01']
 
         results = pd.read_csv('./Dados/resultados_previsao_3_anos_INf_HI_PLD_AE.csv')
         results['Data'] = pd.to_datetime(results['Data'])
+        results = results.loc[results['Data'] <= fim]
 
         results2 = pd.read_csv('./Dados/resultados/resultados/preco/Expe_2/resultados_previsao_3_anos_2_exper.csv')
         results2['Data'] = pd.to_datetime(results2['Data'])
+        results2 = results2.loc[results2['Data'] <= fim]
 
         results3 = pd.read_csv('./Dados/resultados/resultados/preco/Expe_3_melhor/resultados_previsao_3_anos_INf_HI_PLD_AE.csv')
         results3['Data'] = pd.to_datetime(results3['Data'])
+        results3 = results3.loc[results3['Data'] <= fim]
 
 
         def load_inference_data(file_path):
@@ -114,16 +118,15 @@ def topologia():
                 st.markdown("### Where can I get some?")
                 st.markdown("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures")
 
-            '''
+            
             confidence_factor = 0.3
             results['lower_lim'] = results['mean'] - ((results['mean'] - results['lower_lim']) * confidence_factor)
-            results['upper_lim'] = results['mean'] + ((results['upper_lim'] - results['mean']) * confidence_factor) '''   
+            results['upper_lim'] = results['mean'] + ((results['upper_lim'] - results['mean']) * confidence_factor)   
             fig = go.Figure()
-            data_limite = data.loc[data['DATA'] <= '2021-12-01']
             # Adicionar a linha média
             fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
 
-            # Adicionar os limites superior e inferior
+             # Adicionar os limites superior e inferior
             fig.add_trace(go.Scatter(x=results['Data'], y=results['upper_lim'], mode='lines', 
                                         line=dict(color='rgba(0,0,0,0)', width=1),
                                     showlegend=False))
@@ -131,7 +134,7 @@ def topologia():
                                     name='Limite Inferior'))
             fig.add_trace(go.Scatter(x=results['Data'], y=results['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
                                     name='Limite Superior'))
-            fig.add_trace(go.Scatter(x=results['Data'], y=results['mean'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+            fig.add_trace(go.Scatter(x=results['Data'], y=results['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
                                     name='Previsto'))
 
             fig.update_layout(title='Intervalo de Confiança',
@@ -203,7 +206,11 @@ def topologia():
 
                 # Exibir a figura
                 st.plotly_chart(fig)
-
+            '''
+            confidence_factor = 0.6
+            results2['lower_lim'] = results2['mean'] - ((results2['mean'] - results2['lower_lim']) * confidence_factor)
+            results2['upper_lim'] = results2['mean'] + ((results2['upper_lim'] - results2['mean']) * confidence_factor)
+            '''
             fig = go.Figure()
             # Adicionar a linha média
             fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
@@ -216,7 +223,7 @@ def topologia():
                                     name='Limite Inferior'))
             fig.add_trace(go.Scatter(x=results2['Data'], y=results2['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
                                     name='Limite Superior'))
-            fig.add_trace(go.Scatter(x=results2['Data'], y=results2['mean'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+            fig.add_trace(go.Scatter(x=results2['Data'], y=results2['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
                                     name='Previsto'))
 
             fig.update_layout(title='Intervalo de Confiança',
@@ -280,10 +287,11 @@ def topologia():
                                 annotations=[ dict(text="", showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002 ) ], scene=dict(xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), zaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
 
                 frames = []
-                for i in np.linspace(0, 2 * np.pi, 36):
-                    new_x = np.cos(i) * np.array(node_x) - np.sin(i) * np.array(node_y)
-                    new_y = np.sin(i) * np.array(node_x) + np.cos(i) * np.array(node_y)
-                    frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=node_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
+                for i in range(36):
+                    new_x = node_x + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em x
+                    new_y = node_y + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em y
+                    new_z = node_z + np.sin(i * 100 * np.pi / 180) * 0.1  # Movimento sinusoidal em z
+                    frames.append(go.Frame(data=[go.Scatter3d(x=new_x, y=new_y, z=new_z, mode='markers+text', text=list(G.nodes()), textposition="middle center", marker=dict(color="skyblue", size=15))]))
 
                 fig.frames = frames
 
@@ -294,13 +302,12 @@ def topologia():
                 st.markdown("### Where can I get some?")
                 st.markdown("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures")
 
-            '''
+            
             confidence_factor = 0.3
-            results['lower_lim'] = results['mean'] - ((results['mean'] - results['lower_lim']) * confidence_factor)
-            results['upper_lim'] = results['mean'] + ((results['upper_lim'] - results['mean']) * confidence_factor) '''   
+            results3['lower_lim'] = results3['mean'] - ((results3['mean'] - results3['lower_lim']) * confidence_factor)
+            results3['upper_lim'] = results3['mean'] + ((results3['upper_lim'] - results3['mean']) * confidence_factor) 
+            
             fig = go.Figure()
-            data_limite = data.loc[data['DATA'] <= '2021-12-01']
-            # Adicionar a linha média
             fig.add_trace(go.Scatter(x=data_limite['DATA'], y=data_limite['LPC_SECO'], mode='lines', name='Real'))
 
             # Adicionar os limites superior e inferior
@@ -311,7 +318,7 @@ def topologia():
                                     name='Limite Inferior'))
             fig.add_trace(go.Scatter(x=results3['Data'], y=results3['upper_lim'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
                                     name='Limite Superior'))
-            fig.add_trace(go.Scatter(x=results3['Data'], y=results3['mean'], mode='lines', fill='tonexty', fillcolor='rgba(0,100,80,0.2)',
+            fig.add_trace(go.Scatter(x=results3['Data'], y=results3['mean'], mode='lines', fillcolor='rgba(0,100,80,0.2)',
                                     name='Previsto'))
 
             fig.update_layout(title='Intervalo de Confiança',
