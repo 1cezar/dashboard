@@ -10,6 +10,7 @@ import networkx as nx
 import json
 import altair as alt
 from streamlit_option_menu import option_menu
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 def topologia():
         cenario = option_menu(None, ["Cenário Um", "Cenário Dois", "Cenário Três"], 
@@ -121,7 +122,7 @@ def topologia():
 
             with tab2:
                 st.write('##### Nesse cenário foi inserido aleatoriamento inferências na variável Energia Armazenada. Os dados de Energia Armazendo foram categorizados em: Nível Baixo, Nível Médio e Nível Alto As inferências foram sempre na categoria Alto para os meses de Dezembro/2019 até Novembro/2020.')
-
+                          
                 confidence_factor = 0.2
                 results['lower_lim'] = results['mean'] - ((results['mean'] - results['lower_lim']) * confidence_factor)
                 results['upper_lim'] = results['mean'] + ((results['upper_lim'] - results['mean']) * confidence_factor) 
