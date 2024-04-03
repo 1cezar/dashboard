@@ -1,10 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import seaborn as sns  
-import matplotlib.pyplot as plt 
-import numpy as np
-import plotly.graph_objects as go
 
 
 def previsao():          
@@ -12,11 +8,6 @@ def previsao():
     data['DATA'] = pd.to_datetime(data['DATA'])
     correlation_matrix = data.corr(method='pearson')
 
-
-    st.markdown("""
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    """, unsafe_allow_html=True)
-    
     # Layout do gráfico
     col1, col2 = st.columns([8, 1])
 
@@ -81,7 +72,7 @@ def previsao():
         # Definir as cores das linhas
         fig_time_series.update_traces(line=dict(color='#1564c0'))  # Cor da primeira linha
         if len(selected_variables) > 1:
-            fig_time_series.update_traces(line=dict(color='#90ff00'), selector=dict(name=selected_variables[1]))  # Cor da segunda linha, se houver
+            fig_time_series.update_traces(line=dict(color='#398e3d'), selector=dict(name=selected_variables[1]))  # Cor da segunda linha, se houver
 
         # Adicionar eixo y à direita
         for i in range(1, len(selected_variables)):

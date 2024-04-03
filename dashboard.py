@@ -1,11 +1,10 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from streamlit_option_menu import option_menu
 from previsao import previsao
 from topologia import topologia
-from demanda import demanda
 
-st.set_page_config(layout="wide", page_icon=None)
+st.set_page_config(layout="wide")
+
 st.title("Plataforma de Acompanhamento de Resultados")
 paginas = option_menu(None, ["Análise de Variáveis", "Curva Forward"], 
     icons=['bi bi-search', 'bi bi-graph-up','bi bi-clipboard-pulse'], 
